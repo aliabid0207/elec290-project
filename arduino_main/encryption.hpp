@@ -1,10 +1,10 @@
-#ifndef ENCRYPT_HPP
+#ifndef ENCRYPTION_HPP
 
-#define ENCRYPT_HPP
+#define ENCRYPTION_HPP
 
 #include <ChaChaPoly.h>
 
-class Encrypt
+class Encryption
 {
   private:
   // 256-bit key (32 bytes)
@@ -18,10 +18,9 @@ class Encrypt
   // Instance of the ChaChaPoly cipher
   ChaChaPoly chachapoly;
 
+  public:
   // 96-bit Initialization Vector / Nonce (12 bytes) - Must be unique for EVERY message!
-  const uint8_t iv[12] = {
-    0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb
-  };
+  static uint8_t iv[12];
 };
 
 #endif
