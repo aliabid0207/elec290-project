@@ -1,9 +1,9 @@
-#include "encrypt.hpp"
+#include "encryption.hpp"
 #include <Crypto.h>
 #include <string.h>
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   while (!Serial); // Wait for serial monitor to connect
   delay(1000);
 
@@ -22,17 +22,16 @@ void setup() {
   // -----------------------------------------------------------------
   // 1. ENCRYPTION STAGE
   // -----------------------------------------------------------------
-  chachapoly.clear();
-  chachapoly.setKey(key, sizeof(key));
-  chachapoly.setIV(iv, sizeof(iv));
+  Encryption e;
+  e.init();
   
   // (Optional) Add associated authenticated data (AAD) if needed using chachapoly.addAuthData()
   
   // Perform the encryption
-  chachapoly.encrypt(ciphertext, (const byte *)plaintext, len);
+  e.encrypt(plaintext, len, ciphertext);
   
   // Generate the authentication tag
-  chachapoly.computeTag(authTag, sizeof(authTag));
+  e.compute_auth_tag(authTag, sizeof(authTag));
 
   // Print Ciphertext in Hex format
   Serial.print("Ciphertext (HEX): ");
@@ -55,16 +54,14 @@ void setup() {
   // -----------------------------------------------------------------
   // 2. DECRYPTION & VERIFICATION STAGE
   // -----------------------------------------------------------------
-  chachapoly.clear();
-  chachapoly.setKey(key, sizeof(key));
-  chachapoly.setIV(iv, sizeof(iv));
+  e.init();
 
   // Perform the decryption
-  chachapoly.decrypt((byte *)decrypted, ciphertext, len);
+  e.decrypt((byte*) decrypted, ciphertext, len);
   decrypted[len] = '\0'; // Properly terminate the string
 
   // Check if the validation tag matches (confirms integrity and authenticity)
-  if (chachapoly.checkTag(authTag, sizeof(authTag))) {
+  if (e.check_tag(authTag, sizeof(authTag))) {
     Serial.println("✓ Success! Authentication tag is valid.");
     Serial.print("Decrypted Message: ");
     Serial.println(decrypted);
