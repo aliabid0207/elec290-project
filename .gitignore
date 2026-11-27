@@ -1,3 +1,7 @@
 **/.DS_Store
 .vscode/
 .venv/
+build/
+graphify-out/
+__pycache__
+.pio
